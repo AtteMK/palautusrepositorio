@@ -1,2 +1,1 @@
-"# palautusrepositorio" 
-"# palautusrepositorio" 
+Palautus repositorio Full stack open -kurssi.
