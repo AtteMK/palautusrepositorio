@@ -73,5 +73,6 @@
 
         browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
         activate server
-        server->>browser: HTML document
         server deactivate
+
+        Note: the browser executes the JavaScript code that creates a new note, adds it to the list of notes, rerenders the note onthe page and sends the new note to the server
