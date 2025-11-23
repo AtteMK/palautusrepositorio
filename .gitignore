@@ -1,6 +1,5 @@
 node_modules
 *.code-workspace
-/osa1/.gitignore
 /osa1/eslint.config.js
 /osa1/index.html
 /osa1/package.json
