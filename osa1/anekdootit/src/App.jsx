@@ -37,12 +37,13 @@ const App = () => {
     const updatedVotes = [...votes]
     updatedVotes[selected] += 1
     setVotes(updatedVotes)
-    for (let i = 1; i < updatedVotes.length; i++) {
+    for (let i = 0; i < updatedVotes.length; i++) {
         if (updatedVotes[i] > updatedVotes[mostVotes]) {
             setMostVotes(i)
         }
     }
     console.log(updatedVotes)
+    console.log(mostVotes)
   }
 
   return (
