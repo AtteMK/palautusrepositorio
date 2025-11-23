@@ -11,17 +11,53 @@ const Button = (props) => {
 
 const Statistics = (props) => {
   const { good, neutral, bad, all } = props
+  if (all==0) {
+    return (
+      <>
+        No feedback given
+      </>
+    )
+  }
   return (
-    <div>
-      good: {good} <br />
-      neutral: {neutral} <br />
-      bad: {bad} <br />
-      all: {all} <br />
-    </div>
+    <table>
+      <tbody>
+        <tr>
+          <td>good</td>
+          <td>{good}</td>
+        </tr>
+        <tr>
+          <td>neutral</td>
+          <td>{neutral}</td>
+        </tr>
+        <tr>
+          <td>bad</td>
+          <td>{bad}</td>
+        </tr>
+        <tr>
+          <td>all</td>
+          <td>{all}</td>
+        </tr>
+        <tr>
+          <td>average</td>
+          <td>{(good - bad) / (all)}</td>
+        </tr>
+        <tr>
+          <td>positive</td>
+          <td>{(good / all) * 100}%</td>
+        </tr>
+      </tbody>
+    </table>
   )
 }
 
 const Display = (props) => <><h1>{props.header}</h1></>
+
+const StatisticLine = (props) => {
+  const { text, value } = props
+  return(
+    <>{text}: {value}</>
+  )
+}
 
 const App = () => {
   // tallenna napit omaan tilaansa
