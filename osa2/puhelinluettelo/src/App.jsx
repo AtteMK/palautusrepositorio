@@ -7,7 +7,7 @@ import './index.css'
 const Person = ({ person, setPersons, setErrorMessage, setErrorType }) => {
   console.log('Important', person.id)
   const deletePerson = (id) => {
-    const personId = person.id
+    const personId = id
     if (confirm(`Delete ${person.name}`)) {
       personService
         .remove(personId)
@@ -31,7 +31,7 @@ const Person = ({ person, setPersons, setErrorMessage, setErrorType }) => {
   return (
     <li>
       {person.name} {person.number} 
-      <button onClick={deletePerson}>delete</button>
+      <button onClick={() => deletePerson(person.id)}>delete</button>
     </li>
   )
 }
@@ -94,7 +94,7 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
         })
         .catch(error => {
           setErrorType('error')
-          setErrorMessage(`Adding of ${returnedPerson.name} failed`)
+          setErrorMessage(`Adding of ${personObject.name} failed`)
           setTimeout(() => {
             setErrorMessage(null)
           }, 2500)
@@ -141,12 +141,12 @@ const Persons = ({ showPersons, setPersons, setErrorMessage, setErrorType }) => 
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [showPersons, setShowPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [errorType, setErrorType] = useState('error')
-  const showPersons = persons
 
   useEffect(() => {
     console.log('effect')
@@ -154,6 +154,7 @@ const App = () => {
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
+        setShowPersons(initialPersons)
       })
       .catch(error => {
         console.log('fail')
@@ -182,7 +183,7 @@ const App = () => {
       filter={filter} 
       handleFilterChange={handleFilterChange} 
       showPersons={showPersons}
-      setShowPersons={() => {}} />
+      setShowPersons={setShowPersons} />
       <h3>add a new</h3>
       <PersonForm 
       persons={persons} 
@@ -197,7 +198,11 @@ const App = () => {
       setErrorType={setErrorType}
       />
       <h3>Numbers</h3>
-      <Persons showPersons={showPersons} setPersons={setPersons} setErrorMessage={setErrorMessage} setErrorType={setErrorType} />
+      <Persons 
+      showPersons={showPersons} 
+      setPersons={setPersons} 
+      setErrorMessage={setErrorMessage} 
+      setErrorType={setErrorType} />
     </div>
   )
 
