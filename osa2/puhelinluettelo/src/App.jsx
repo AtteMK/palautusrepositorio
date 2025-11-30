@@ -83,7 +83,6 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
       personService
         .create(personObject)
           .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
           setErrorType('success')
           setErrorMessage(`Successfully added ${returnedPerson.name}`)
           setTimeout(() => {
@@ -91,6 +90,7 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
           }, 2500)
           setNewName('')
           setNewNumber('')
+          setPersons(persons.concat(returnedPerson))
         })
         .catch(error => {
           setErrorType('error')
