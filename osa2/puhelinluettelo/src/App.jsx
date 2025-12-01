@@ -21,7 +21,7 @@ const Person = ({ person, setPersons, setErrorMessage, setErrorType }) => {
         })
         .catch(error => {
           setErrorType('error')
-          setErrorMessage(`Deteletion of ${person.name} failed`)
+          setErrorMessage(error.response?.data?.error)
           setTimeout(() => {
             setErrorMessage(null)
           }, 2500)
@@ -52,7 +52,7 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
       })
       .catch(error => {
         setErrorType('error')
-        setErrorMessage(`Changing the number of ${person.name} failed`)
+        setErrorMessage(error.response?.data?.error)
         setTimeout(() => {
           setErrorMessage(null)
         }, 2500)
@@ -94,7 +94,7 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
         })
         .catch(error => {
           setErrorType('error')
-          setErrorMessage(`Adding of ${personObject.name} failed`)
+          setErrorMessage(error.response?.data?.error)
           setTimeout(() => {
             setErrorMessage(null)
           }, 2500)
@@ -112,28 +112,24 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
   )
 }
 
-const Filter = ({ persons, filter, handleFilterChange, setShowPersons }) => {
-  const filterPersons = (event) => {
-    event.preventDefault()
-    console.log(persons)
-    const newPersons = (filter === (''))
-      ? persons
-      : persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase())) 
-    setShowPersons(newPersons)
-  }
-  return(
-    <form onSubmit={filterPersons}>
-      <div>filter shown with<input onChange={handleFilterChange} /></div>
-      <div><button type="submit">filter</button></div>
-    </form>
-  )
-}
+const Filter = ({ filter, handleFilterChange }) => (
+  <div>
+    filter shown with <input value={filter} onChange={handleFilterChange} />
+  </div>
+)
 
-const Persons = ({ showPersons, setPersons, setErrorMessage, setErrorType }) => {
+const Persons = ({ persons, setPersons, setErrorMessage, setErrorType }) => {
+  if (!Array.isArray(persons)) return null
   return(
     <div>
-      {showPersons.map(person => 
-        <Person key={person.name} person={person} setPersons={setPersons} setErrorMessage={setErrorMessage} setErrorType={setErrorType} />
+      {persons.map(person => 
+        <Person 
+          key={person.id} 
+          person={person} 
+          setPersons={setPersons} 
+          setErrorMessage={setErrorMessage} 
+          setErrorType={setErrorType} 
+        />
       )}
     </div>
   )
@@ -141,7 +137,6 @@ const Persons = ({ showPersons, setPersons, setErrorMessage, setErrorType }) => 
 
 const App = () => {
   const [persons, setPersons] = useState([])
-  const [showPersons, setShowPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
@@ -154,7 +149,6 @@ const App = () => {
       .getAll()
       .then(initialPersons => {
         setPersons(initialPersons)
-        setShowPersons(initialPersons)
       })
       .catch(error => {
         console.log('fail')
@@ -174,16 +168,18 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const filteredPersons = Array.isArray(persons) ?
+    (filter === ''
+      ? persons
+      : persons.filter(p => p.name.toLowerCase().includes(filter.toLowerCase()))
+    )
+    : []
+
   return (
     <div>
       <h2>Phonebook</h2>
       <Notification message={errorMessage} type={errorType} />
-      <Filter 
-      persons={persons}
-      filter={filter} 
-      handleFilterChange={handleFilterChange} 
-      showPersons={showPersons}
-      setShowPersons={setShowPersons} />
+      <Filter filter={filter} handleFilterChange={handleFilterChange} />
       <h3>add a new</h3>
       <PersonForm 
       persons={persons} 
@@ -199,10 +195,10 @@ const App = () => {
       />
       <h3>Numbers</h3>
       <Persons 
-      showPersons={showPersons} 
-      setPersons={setPersons} 
-      setErrorMessage={setErrorMessage} 
-      setErrorType={setErrorType} />
+      persons={filteredPersons}
+      setPersons={setPersons}
+      setErrorMessage={setErrorMessage}
+      setErrorType={setErrorType}  />
     </div>
   )
 
