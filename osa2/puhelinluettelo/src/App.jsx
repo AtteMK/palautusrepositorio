@@ -12,7 +12,7 @@ const Person = ({ person, setPersons, setErrorMessage, setErrorType }) => {
       personService
         .remove(personId)
         .then(() => {
-          setPersons(prev => prev.filter(p => p.id !== personId))
+          setPersons(prev => prev.filter(person => person.id !== personId))
           setErrorType('success')
           setErrorMessage(`${person.name} was deleted successfully`)
           setTimeout(() => {
