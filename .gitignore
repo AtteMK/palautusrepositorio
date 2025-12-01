@@ -8,3 +8,4 @@ node_modules
 /osa1/vite.config.js
 /osa1/src
 /osa1/public
+.env
