@@ -21,7 +21,7 @@ const Person = ({ person, setPersons, setErrorMessage, setErrorType }) => {
         })
         .catch(error => {
           setErrorType('error')
-          setErrorMessage(error.response.data)
+          setErrorMessage(error.response.data.error)
           setTimeout(() => {
             setErrorMessage(null)
           }, 2500)
@@ -52,7 +52,7 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
       })
       .catch(error => {
         setErrorType('error')
-        setErrorMessage(error.response.data)
+        setErrorMessage(error.response.data.error)
         setTimeout(() => {
           setErrorMessage(null)
         }, 2500)
@@ -93,8 +93,9 @@ const PersonForm = ({ persons, setPersons, newName, setNewName, newNumber, setNe
           setPersons(persons.concat(returnedPerson))
         })
         .catch(error => {
+          console.log(error.response.data)
           setErrorType('error')
-          setErrorMessage(error.response.data)
+          setErrorMessage(error.response.data.error)
           setTimeout(() => {
             setErrorMessage(null)
           }, 2500)

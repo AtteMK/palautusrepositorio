@@ -69,10 +69,13 @@ app.put('/api/persons/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-app.get('/info', (request, response) => {
-  const timestamp = new Date().toString()
-  const personsCount = persons.length
-  response.send(`Phonebook has info for ${personsCount} people<br><br>${timestamp}`)
+app.get('/info', (request, response, next) => {
+  Person.countDocuments({})
+    .then(count => {
+      const timestamp = new Date().toString()
+      response.send(`Phonebook has info for ${count} people<br><br>${timestamp}`)
+    })
+    .catch(error => next(error))
 })
 
 const PORT = process.env.PORT
