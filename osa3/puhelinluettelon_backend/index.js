@@ -6,7 +6,7 @@ const app = express()
 const Person = require('./models/person')
 
 app.use(express.json())
-morgan.token('body', function (req, res) {return JSON.stringify(req.body)})
+morgan.token('body', function (req, _res) {return JSON.stringify(req.body)})
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(cors())
 app.use(express.static('dist'))
@@ -41,8 +41,8 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.post('/api/persons', (request, response, next) => {
   const { name, number } = request.body
   if (!name || !number) {
-    return response.status(400).json({ 
-      error: 'name or number missing' 
+    return response.status(400).json({
+      error: 'name or number missing'
     })
   }
   const person = new Person({ name, number })
