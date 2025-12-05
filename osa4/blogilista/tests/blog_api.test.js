@@ -5,8 +5,11 @@ const { test, beforeEach, after, describe } = require('node:test')
 
 const app = require('../app')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 const api = supertest(app)
+
+let token = null
 
 const initialBlogs = [
     {
@@ -24,8 +27,27 @@ const initialBlogs = [
 ]
 
 beforeEach(async () => {
-    await Blog.deleteMany({});
-    await Blog.insertMany(initialBlogs);
+    await Blog.deleteMany({})
+    await User.deleteMany({})
+
+    const testUser = {
+        username: "testuser",
+        name: "Test User",
+        password: "password123"
+    }
+
+    await api.post('/api/users').send(testUser)
+
+    const login = await api
+        .post('/api/login')
+        .send({ username: "testuser", password: "password123" })
+
+    token = login.body.token
+
+    const user = await User.findOne({ username: "testuser" })
+
+    const blogsWithUser = initialBlogs.map(blog => ({ ...blog, user: user._id }))
+    await Blog.insertMany(blogsWithUser)
 })
 
 after(async () => {
@@ -37,8 +59,8 @@ describe('GET /api/blogs', () => {
         const response = await api
             .get('/api/blogs')
             .expect(200)
-            .expect('Content-Type', /application\/json/);
-        assert.strictEqual(response.body.length, initialBlogs.length, 'Incorrect number of blogs returned');
+            .expect('Content-Type', /application\/json/)
+        assert.strictEqual(response.body.length, initialBlogs.length, 'Incorrect number of blogs returned')
     })
 
     test('of blog entries contain an id field instead of _id', async () => {
@@ -60,6 +82,7 @@ describe('POST /api/blogs', () => {
 
         await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -82,6 +105,7 @@ describe('POST /api/blogs', () => {
         }
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(newBlog)
             .expect(201)
             .expect('Content-Type', /application\/json/)
@@ -100,6 +124,7 @@ describe('POST /api/blogs', () => {
 
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(blogWithoutTitle)
             .expect(400)
         assert.ok(response.status === 400, 'Expected status 400 for missing title')
@@ -114,6 +139,7 @@ describe('POST /api/blogs', () => {
 
         const response = await api
             .post('/api/blogs')
+            .set('Authorization', `Bearer ${token}`)
             .send(blogWithoutUrl)
             .expect(400)
         assert.ok(response.status === 400, 'Expected status 400 for missing url')
@@ -129,6 +155,7 @@ describe('DELETE /api/blogs/:id', () => {
 
         await api
             .delete(`/api/blogs/${blogToDelete._id}`)
+            .set('Authorization', `Bearer ${token}`)
             .expect(204)
 
         const blogsAtEnd = await Blog.find({}).lean()
