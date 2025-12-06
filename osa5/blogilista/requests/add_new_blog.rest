@@ -1,0 +1,10 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5vcnBwYTEyMyIsImlkIjoiNjkzMmZmYTc3NzM5ODY5YzA3NDFhYTgwIiwiaWF0IjoxNzY1MDEzMTY2LCJleHAiOjE3NjUwMTY3NjZ9.K-Y5iBOoWgWsuUf-1QHWLmUnJVp1a7auM7c8U8diG_k
+
+{
+    "title": "Nalli on kallio",
+    "author": "Runberger",
+    "url": "some random url2",
+    "likes": "34"
+}
